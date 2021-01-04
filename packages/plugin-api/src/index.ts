@@ -1,12 +1,11 @@
 import jsonMLUtils from 'jsonml.js/lib/utils';
 
-const { getChildren, getTagName } = jsonMLUtils;
-
-export default (markdownData: any) => {
+export default () => (markdownData: any) => {
   const { content } = markdownData;
-  const contentChildren = getChildren(content);
+  const contentChildren = jsonMLUtils.getChildren(content);
   const apiStarIndex = contentChildren.findIndex(
-    (node: any) => getTagName(node) === 'h2' && /^API/.test(getChildren(node)[0])
+    (node: any) =>
+      jsonMLUtils.getTagName(node) === 'h2' && /^API/.test(jsonMLUtils.getChildren(node)[0])
   );
 
   if (apiStarIndex >= 0) {

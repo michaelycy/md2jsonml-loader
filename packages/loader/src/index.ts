@@ -7,7 +7,7 @@ import { transform } from 'md2jsonml-core';
 import schema from './schema';
 
 interface IOptions {
-  plugins?: string[];
+  plugins?: any[];
 }
 
 /**
@@ -23,20 +23,13 @@ export default function loader(this: any, source: string) {
   // 获取文件路径
   const { resourcePath, rootContext } = this as any;
   const { plugins = [] } = options;
-
+  // 获取文件在项目中的路径
   const transformed = (resourcePath as string).replace(new RegExp(rootContext), '');
-  console.log('resourcePath: ', path.isAbsolute(transformed) ? `.${transformed}` : transformed);
-  // const context
   const result = transform(source);
 
-  plugins.forEach((plg: string | ((...args: any) => void)) => {
-    if (typeof plg === 'string') {
-      const pluginFunc = require(plg).default;
-      pluginFunc(result);
-    } else if (typeof plg === 'function') {
-      plg(result);
-    }
-  });
+  (result as any).filepath = path.isAbsolute(transformed) ? `.${transformed}` : transformed;
+
+  plugins.forEach((plg: (...args: any) => void) => plg(result));
 
   return `export default ${JSON.stringify(result)}`;
 }

@@ -7,5 +7,6 @@
     { "path": "./plugin-api" },
     { "path": "./plugin-highlight" },
     { "path": "./plugin-description" }
+    // { "path": "./babel-plugin-react" }
   ]
 }

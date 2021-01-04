@@ -6,27 +6,27 @@ export interface IOptions {
   clsPrefix?: string;
 }
 
+const { getTagName, getChildren, isElement } = jsonMLUtils;
 const isHeading = (tagname: string) => /^h[1-6]$/i.test(tagname);
 const hasAttributes = (jml: any) => Array.isArray(jml) && 'string' === typeof jml[0];
 
 function transform(markdownData: any, config: IOptions = {}) {
-  const maxDepth = config.maxDepth || 6;
+  const { maxDepth = 6, keepElem, clsPrefix } = config;
 
   const listItems =
     hasAttributes(markdownData.content) &&
-    jsonMLUtils
-      .getChildren(markdownData.content)
+    getChildren(markdownData.content)
       .filter((node: any) => {
-        const tagName = jsonMLUtils.getTagName(node);
+        const tagName = getTagName(node);
         return isHeading(tagName) && +tagName.charAt(1) <= maxDepth;
       })
       .map((node: any) => {
-        const tagName = jsonMLUtils.getTagName(node);
-        const headingNodeChildren = jsonMLUtils.getChildren(node);
+        const tagName = getTagName(node);
+        const headingNodeChildren = getChildren(node);
         const headingText = headingNodeChildren
           .map((node: any) => {
-            if (jsonMLUtils.isElement(node)) {
-              if (jsonMLUtils.hasAttributes(node)) {
+            if (isElement(node)) {
+              if (hasAttributes(node)) {
                 return node[2] || '';
               }
               return node[1] || '';
@@ -42,11 +42,11 @@ function transform(markdownData: any, config: IOptions = {}) {
           [
             'a',
             {
-              className: `_toc-${tagName}`,
+              className: `${clsPrefix}_toc-${tagName}`,
               href: `#${headingTextId}`,
               title: headingText,
             },
-          ].concat(config.keepElem ? headingNodeChildren : [headingText]),
+          ].concat(keepElem ? headingNodeChildren : [headingText]),
         ];
       });
 
@@ -55,4 +55,4 @@ function transform(markdownData: any, config: IOptions = {}) {
   return markdownData;
 }
 
-export default transform;
+export default (config: IOptions = {}) => (markdownData: any) => transform(markdownData, config);

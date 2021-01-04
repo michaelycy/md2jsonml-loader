@@ -3,9 +3,9 @@ export default {
   properties: {
     plugins: {
       type: 'array',
-      items: {
-        type: 'string',
-      },
+      // items: {
+      //   type: 'string',
+      // },
     },
   },
   additionalProperties: false,

@@ -4,6 +4,7 @@ declare module 'mark-twain' {
   export interface MTResult {
     content: any;
     meta: {
+      filepath?: string;
       readonly [key: string]: any;
       readonly __content: string;
     };

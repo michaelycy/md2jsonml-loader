@@ -24,7 +24,7 @@ function highlight(node: any) {
   getAttributes(node).highlighted = Prism.highlight(getCode(node), language);
 }
 
-export default (markdownData: IMTResult) => {
+export default () => (markdownData: IMTResult) => {
   highlight(markdownData.content);
 
   return markdownData;

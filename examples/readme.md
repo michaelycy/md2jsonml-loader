@@ -1,8 +1,15 @@
 ---
 name: Markdown page
+title:
+  zh-CN: 中文
+  en-US: 英文
 ---
 
-# Markdown 编码规范
+jjddj
+
+---
+
+## Markdown 编码规范
 
 ## 简介
 
@@ -124,3 +131,9 @@ console.log('');
 ## 扩展阅读
 
 - [Markdown 语法教程](https://markdown.com.cn/)
+
+## API
+
+| 成员 | 说明 |
+| ---- | ---- |
+| m    | desc |
