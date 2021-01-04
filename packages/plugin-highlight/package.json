@@ -1,6 +1,6 @@
 {
   "name": "md2jsonml-plugin-highlight",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "miyoo <thenear@sina.com>",
   "homepage": "",
@@ -18,7 +18,7 @@
     "build": "echo \"high\""
   },
   "dependencies": {
-    "node-prismjs": "^0.1.2",
-    "jsonml.js": "^0.1.0"
+    "jsonml.js": "^0.1.0",
+    "node-prismjs": "^0.1.2"
   }
 }
