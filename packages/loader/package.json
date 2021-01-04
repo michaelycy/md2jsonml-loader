@@ -1,0 +1,29 @@
+{
+  "name": "webpack-md2jsonml-loader",
+  "version": "0.0.0",
+  "description": "markdown 转换为react组件",
+  "keywords": [
+    "markdown",
+    "react"
+  ],
+  "author": "miyoo <thenear@sina.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "echo \"loader\""
+  },
+  "dependencies": {
+    "loader-utils": "^2.0.0",
+    "mark-twain": "^2.0.3",
+    "schema-utils": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/loader-utils": "^2.0.1"
+  },
+  "files": [
+    "lib",
+    "@types",
+    "README.md"
+  ]
+}

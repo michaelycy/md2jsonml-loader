@@ -1,0 +1,4 @@
+{
+  "extends": "./packages/tsconfig.base.json",
+  "exclude": ["examples", "scripts"]
+}

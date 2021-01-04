@@ -1,0 +1,23 @@
+{
+  "name": "md2jsonml-core",
+  "version": "0.0.0",
+  "description": "装换核心",
+  "keywords": [
+    "markdown"
+  ],
+  "author": "miyoo <thenear@sina.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "echo \"core\""
+  },
+  "dependencies": {
+    "mark-twain": "^2.0.3"
+  },
+  "files": [
+    "lib",
+    "@types",
+    "README.md"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./core" },
+    { "path": "./loader" },
+    { "path": "./plugin-toc" },
+    { "path": "./plugin-api" },
+    { "path": "./plugin-highlight" },
+    { "path": "./plugin-description" }
+  ]
+}
