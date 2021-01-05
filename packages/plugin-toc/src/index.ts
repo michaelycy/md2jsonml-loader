@@ -39,10 +39,13 @@ function transform(markdownData: any, config: IOptions = {}) {
 
         return [
           'li',
+          {
+            className: `${clsPrefix}-toc-li toc-li`,
+          },
           [
             'a',
             {
-              className: `${clsPrefix}-toc-${tagName} toc-li`,
+              className: `${clsPrefix}-toc-${tagName}`,
               href: `#${headingTextId}`,
               title: headingText,
             },
