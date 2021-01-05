@@ -42,7 +42,7 @@ function transform(markdownData: any, config: IOptions = {}) {
           [
             'a',
             {
-              className: `${clsPrefix}_toc-${tagName}`,
+              className: `${clsPrefix}-toc-${tagName} toc-li`,
               href: `#${headingTextId}`,
               title: headingText,
             },
@@ -50,7 +50,7 @@ function transform(markdownData: any, config: IOptions = {}) {
         ];
       });
 
-  markdownData.toc = ['ul'].concat(listItems);
+  markdownData.toc = ['ul', { className: `${clsPrefix}-toc-ul toc-ul` }].concat(listItems);
 
   return markdownData;
 }
