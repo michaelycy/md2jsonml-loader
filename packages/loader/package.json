@@ -1,6 +1,6 @@
 {
   "name": "webpack-md2jsonml-loader",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "markdown 转换为react组件",
   "keywords": [
     "markdown",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "loader-utils": "^2.0.0",
-    "md2jsonml-core": "^0.0.3",
+    "md2jsonml-core": "^0.0.4",
     "schema-utils": "^3.0.0"
   },
   "devDependencies": {
