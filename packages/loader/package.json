@@ -16,10 +16,13 @@
   "dependencies": {
     "loader-utils": "^2.0.0",
     "md2jsonml-core": "^0.0.4",
+    "node-prismjs": "^0.1.2",
+    "prismjs": "^1.23.0",
     "schema-utils": "^3.0.0"
   },
   "devDependencies": {
-    "@types/loader-utils": "^2.0.1"
+    "@types/loader-utils": "^2.0.1",
+    "@types/prismjs": "^1.16.2"
   },
   "files": [
     "lib",

@@ -1,4 +1,4 @@
-import Prism from 'node-prismjs';
+import Prism from './prism';
 import jsonMLUtils from 'jsonml.js/lib/utils';
 import { IMTResult } from 'md2jsonml-core';
 
@@ -10,7 +10,7 @@ const getCode = (node: any) => getChildren(getChildren(node)[0] || '')[0] || '';
  * 高亮语法
  * @param node 节点
  */
-function highlight(node: any) {
+export function highlight(node: any) {
   if (!isElement(node)) {
     return;
   }
@@ -21,7 +21,11 @@ function highlight(node: any) {
   }
 
   var language = Prism.languages[getAttributes(node).lang] || Prism.languages.autoit;
-  getAttributes(node).highlighted = Prism.highlight(getCode(node), language);
+  getAttributes(node).highlighted = Prism.highlight(
+    getCode(node),
+    language,
+    getAttributes(node).lang
+  );
 }
 
 export default () => (markdownData: IMTResult) => {

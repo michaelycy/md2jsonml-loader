@@ -1,12 +1,4 @@
 {
   "files": [],
-  "references": [
-    { "path": "./core" },
-    { "path": "./loader" },
-    { "path": "./plugin-toc" },
-    { "path": "./plugin-api" },
-    { "path": "./plugin-highlight" },
-    { "path": "./plugin-description" }
-    // { "path": "./babel-plugin-react" }
-  ]
+  "references": [{ "path": "./core" }, { "path": "./loader" }]
 }

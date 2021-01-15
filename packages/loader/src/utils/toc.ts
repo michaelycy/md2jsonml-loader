@@ -1,17 +1,17 @@
 import jsonMLUtils from 'jsonml.js/lib/utils';
+import { isHeading } from '.';
 
-export interface IOptions {
+export interface ITocOptions {
   maxDepth?: 1 | 2 | 3 | 4 | 5 | 6;
   keepElem?: boolean;
   clsPrefix?: string;
 }
 
 const { getTagName, getChildren, isElement } = jsonMLUtils;
-const isHeading = (tagname: string) => /^h[1-6]$/i.test(tagname);
 const hasAttributes = (jml: any) => Array.isArray(jml) && 'string' === typeof jml[0];
 
-function transform(markdownData: any, config: IOptions = {}) {
-  const { maxDepth = 6, keepElem, clsPrefix } = config;
+function transform(markdownData: any, config: ITocOptions = {}) {
+  const { maxDepth = 2, keepElem, clsPrefix } = config;
 
   const listItems =
     hasAttributes(markdownData.content) &&
@@ -58,4 +58,4 @@ function transform(markdownData: any, config: IOptions = {}) {
   return markdownData;
 }
 
-export default (config: IOptions = {}) => (markdownData: any) => transform(markdownData, config);
+export default (config: ITocOptions = {}) => (markdownData: any) => transform(markdownData, config);
