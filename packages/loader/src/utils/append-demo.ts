@@ -5,6 +5,7 @@ import { IMarkdownData } from '../types';
 
 export interface IDataAppendOptions {
   clsPrefix?: string;
+  babelConfig?: any;
 }
 
 export interface IAppendsDemo {
@@ -25,7 +26,7 @@ const { getAttributes, setAttribute } = jsonMLUtils;
 
 function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}) {
   const { fileAbsolutePath, content = [] } = markdownData;
-  const { clsPrefix = 'md' } = options;
+  const { clsPrefix = 'md', babelConfig } = options;
   // 1、定位到 h4 + hr 的位置
   // 2、将 demo 相关内容从 content 中移除
   // 3、解析移除的内容并添加值 demos 中
@@ -52,7 +53,7 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
     const extname = path.extname(demoCodeAbsolutePath);
 
     if (['.ts', '.tsx', '.js', '.jsx'].includes(extname)) {
-      info.dependencies = getDemoCodeDependencies(code);
+      info.dependencies = getDemoCodeDependencies(code, babelConfig);
     }
 
     delLength = delLength + content.splice(offsetStart, offsetEnd - offsetStart + 1).length;
@@ -66,4 +67,5 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
   return markdownData;
 }
 
-export default () => (markdownData: IMarkdownData) => transform(markdownData);
+export default (options: IDataAppendOptions) => (markdownData: IMarkdownData) =>
+  transform(markdownData, options);

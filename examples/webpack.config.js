@@ -1,18 +1,6 @@
 const path = require('path');
-const tocPluginProd = require('md2jsonml-plugin-toc');
-const apiPluginProd = require('md2jsonml-plugin-api');
-const descPluginProd = require('md2jsonml-plugin-description');
-const highlightPluginProd = require('md2jsonml-plugin-highlight');
-
 const loader = path.resolve(__dirname, '../packages', 'loader', 'lib', 'index.js');
-// const { MD2JsonmlAppendDemoPlugin } = require(path.resolve(
-//   __dirname,
-//   '../packages',
-//   'loader',
-//   'lib',
-//   'index.js'
-// ));
-
+const babelConfig = require('./babel.config');
 // const babelPlugin = path.resolve(__dirname, '../packages', 'babel-plugin-react', 'lib', 'index.js');
 
 module.exports = {
@@ -42,6 +30,7 @@ module.exports = {
         loader: loader,
         options: {
           clsPrefix: 'hs',
+          babelConfig,
         },
       },
     ],

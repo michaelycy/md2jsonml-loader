@@ -17,6 +17,7 @@ interface IOptions {
   clsPrefix?: string;
   tocMaxDepth?: 1 | 2 | 3 | 4 | 5 | 6;
   tocKeepElem?: boolean;
+  babelConfig?: any;
 }
 
 /**
@@ -28,7 +29,7 @@ export default function loader(this: any, source: string) {
   const options: IOptions = getOptions(this || { clsPrefix: 'md' });
   // 校验参数
   validate(schema as Schema, options, { name: 'webpack-md2jsonml-loader' });
-  const { clsPrefix, tocKeepElem, tocMaxDepth } = options;
+  const { clsPrefix, tocKeepElem, tocMaxDepth, babelConfig } = options;
 
   // 获取文件路径
   const { resourcePath, rootContext } = this as any;
@@ -44,7 +45,7 @@ export default function loader(this: any, source: string) {
   // 次顺序不可以调整
   [
     descriptionUtils(),
-    appendDemoUtils(),
+    appendDemoUtils({ clsPrefix, babelConfig }),
     highlightUtils(),
     tocUtils({ maxDepth: tocMaxDepth, keepElem: tocKeepElem, clsPrefix }),
     apiUtils(),

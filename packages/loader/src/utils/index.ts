@@ -100,9 +100,18 @@ ${codeText}
  * 解析代码 code, 获取依赖列表
  * @param code {string} code
  */
-export const getDemoCodeDependencies = (code: string) => {
-  const codeAst = parse(code, {});
+export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => {
+  process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+  const { presets = [], plugins = [] } = babelConfig;
   let dependencies: string[] = [];
+
+  const codeAst = parse(code, {
+    filename: 'file.ts',
+    babelrc: false,
+    configFile: false,
+    presets,
+    plugins,
+  });
 
   if (codeAst) {
     const { program } = codeAst as File;

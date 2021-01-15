@@ -6,6 +6,7 @@ export default {
     clsPrefix: { type: 'string' },
     tocMaxDepth: { type: 'number', enum: [1, 2, 3, 4, 5, 6] },
     tocKeepElem: { type: 'boolean' },
+    babelConfig: { type: 'object' },
   },
   additionalProperties: false,
 } as Schema;
