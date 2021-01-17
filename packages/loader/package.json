@@ -11,7 +11,7 @@
   "license": "ISC",
   "main": "lib/index.js",
   "scripts": {
-    "build": "echo \"loader\""
+    "build": "echo \"md-loader\""
   },
   "dependencies": {
     "babel-preset-react-app": "^10.0.0",
