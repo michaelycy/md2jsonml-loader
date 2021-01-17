@@ -1,6 +1,6 @@
 {
   "name": "md2jsonml-core",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "装换核心",
   "keywords": [
     "markdown"
