@@ -29,7 +29,7 @@ export function highlight(node: any) {
 
   getAttributes(node).highlighted = Prism.highlight(
     getCode(node),
-    language,
+    language || {},
     getAttributes(node).lang
   );
 }
