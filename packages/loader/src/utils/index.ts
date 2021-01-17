@@ -105,7 +105,7 @@ export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => 
   const { presets = [], plugins = [] } = babelConfig;
   let dependencies: string[] = [];
 
-  // 关于filename 需要优化  比如确定 ts 或者 tsx
+  // 关于 filename 需要优化  比如确定 ts 或者 tsx
   const codeAst = parse(code, {
     filename: 'file.tsx',
     babelrc: false,
