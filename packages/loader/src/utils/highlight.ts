@@ -20,10 +20,15 @@ export function highlight(node: any) {
     return;
   }
 
-  var language = Prism.languages[getAttributes(node).lang] || Prism.languages.autoit;
+  let language = Prism.languages[getAttributes(node).lang];
+
+  if (language) {
+    language = Prism.languages.autoit;
+  }
+
   getAttributes(node).highlighted = Prism.highlight(
     getCode(node),
-    language || {},
+    language,
     getAttributes(node).lang
   );
 }
