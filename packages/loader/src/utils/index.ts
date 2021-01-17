@@ -105,8 +105,9 @@ export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => 
   const { presets = [], plugins = [] } = babelConfig;
   let dependencies: string[] = [];
 
+  // 关于filename 需要优化  比如确定 ts 或者 tsx
   const codeAst = parse(code, {
-    filename: 'file.ts',
+    filename: 'file.tsx',
     babelrc: false,
     configFile: false,
     presets: presets || [['react-app', { flow: false, typescript: true }]],
