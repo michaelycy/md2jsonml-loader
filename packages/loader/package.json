@@ -14,6 +14,7 @@
     "build": "echo \"loader\""
   },
   "dependencies": {
+    "babel-preset-react-app": "^10.0.0",
     "loader-utils": "^2.0.0",
     "md2jsonml-core": "^0.0.4",
     "prismjs": "^1.23.0",

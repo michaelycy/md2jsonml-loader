@@ -109,7 +109,7 @@ export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => 
     filename: 'file.ts',
     babelrc: false,
     configFile: false,
-    presets,
+    presets: presets || [['react-app', { flow: false, typescript: true }]],
     plugins,
   });
 
