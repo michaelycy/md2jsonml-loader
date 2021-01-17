@@ -24,7 +24,7 @@ export function highlight(node: any) {
   let language = Prism.languages[getAttributes(node).lang];
 
   if (language) {
-    language = Prismjs.languages.autoit;
+    language = Prismjs.languages.autoit || {};
   }
 
   getAttributes(node).highlighted = Prism.highlight(
