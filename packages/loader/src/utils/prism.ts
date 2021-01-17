@@ -15,5 +15,6 @@ import 'prismjs/components/prism-sass';
 import 'prismjs/components/prism-scss';
 import 'prismjs/components/prism-shell-session';
 import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-autoit.js';
 
 export default Prismjs;
