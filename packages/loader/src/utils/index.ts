@@ -66,7 +66,7 @@ export const getDemoRanges = (content: any[] = []) => {
         }
 
         // 若超出长度则标记完成
-        if (contentLength - 1 === nextIndex) {
+        if (contentLength - 1 >= nextIndex) {
           endMark = true;
         }
       }

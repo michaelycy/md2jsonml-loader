@@ -23,7 +23,7 @@ export function highlight(node: any) {
   var language = Prism.languages[getAttributes(node).lang] || Prism.languages.autoit;
   getAttributes(node).highlighted = Prism.highlight(
     getCode(node),
-    language,
+    language || {},
     getAttributes(node).lang
   );
 }
