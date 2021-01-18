@@ -102,7 +102,7 @@ ${codeText}
  */
 export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-  const { presets = [], plugins = [] } = babelConfig;
+  const { presets, plugins } = babelConfig;
   let dependencies: string[] = [];
 
   // 关于 filename 需要优化  比如确定 ts 或者 tsx
