@@ -1,10 +1,13 @@
 import fs from 'fs';
+import R from 'ramda';
 import path from 'path';
-import { parse } from '@babel/core';
 import jsonMLUtils from 'jsonml.js/lib/utils';
 import { transform } from 'md2jsonml-core';
 import { highlight } from './highlight';
+import { parse } from '@babel/core';
 import { File } from '@babel/types';
+import { resolveExtensions } from '../constant/resolve-demo';
+import { IBabelConfig } from './types';
 
 const { getTagName, getChildren, isElement } = jsonMLUtils;
 
@@ -100,14 +103,14 @@ ${codeText}
  * 解析代码 code, 获取依赖列表
  * @param code {string} code
  */
-export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => {
+export const getDemoCodeDependencies = (code: string, babelConfig: IBabelConfig = {}) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-  const { presets, plugins } = babelConfig;
+  const { presets, plugins, filename } = babelConfig;
   let dependencies: string[] = [];
 
   // 关于 filename 需要优化  比如确定 ts 或者 tsx
   const codeAst = parse(code, {
-    filename: 'file.tsx',
+    filename,
     babelrc: false,
     configFile: false,
     presets: presets || [['react-app', { flow: false, typescript: true }]],
@@ -117,10 +120,172 @@ export const getDemoCodeDependencies = (code: string, babelConfig: any = {}) => 
   if (codeAst) {
     const { program } = codeAst as File;
 
-    dependencies = program.body
-      .filter(({ type }) => type === 'ImportDeclaration')
-      .map((item: any) => item.source.value);
+    dependencies = Array.from(
+      new Set(
+        program.body
+          .filter(({ type }) => type === 'ImportDeclaration')
+          .map((item: any) => item.source.value)
+      )
+    );
   }
 
   return dependencies;
+};
+
+/** 文件是否存在 */
+const isExist = (filepath: string) => fs.existsSync(filepath);
+
+/** 是否为文件夹 */
+const isDirectory = (filepath: string) => {
+  const stat = fs.statSync(filepath);
+
+  return stat.isDirectory();
+};
+
+/**
+ * 获取 ../ .. ./ . 的文件路径
+ */
+const getRealIndexFilepath = (
+  filepath: string,
+  absFilepath: string,
+  extensions: string[] = resolveExtensions
+) => {
+  const files = fs.readdirSync(absFilepath);
+  // 获取index.xx.xx.xx 的文件
+  const indexFiles = R.filter<string>(p => {
+    const abs = path.join(absFilepath, p);
+    return /index\.[a-z]+$/.test(p) && isExist(abs) && isDirectory(abs) === false;
+  })(files);
+
+  for (const ext of extensions) {
+    const current = `index${ext}`;
+
+    if (indexFiles.includes(current)) {
+      return {
+        path: path.join(filepath, current),
+        absolutePath: path.join(absFilepath, current),
+      };
+    }
+  }
+
+  return undefined;
+};
+
+/**
+ * 获取 ../xx ./xx 的文件路径
+ */
+const getRealFilepath = (
+  filepath: string,
+  absFilepath: string,
+  extensions: string[] = resolveExtensions
+) => {
+  if (isDirectory(absFilepath)) {
+    return getRealIndexFilepath(filepath, absFilepath, extensions);
+  }
+
+  for (const ext of extensions) {
+    const current = `${absFilepath}${ext}`;
+
+    if (isExist(current) && isDirectory(current) === false) {
+      return {
+        path: filepath + ext,
+        absolutePath: current,
+      };
+    }
+  }
+
+  return undefined;
+};
+
+const getVMPath = (filepath: string, vm = '_temp') => filepath.replace(/\.\./g, vm);
+
+/** 获取 demo 中本地文件依赖 */
+export const getDemoCodeLocal = (
+  depPath: string,
+  context: string,
+  tmp?: string,
+  extensions?: string[]
+) => {
+  const absolutePath = path.join(context, depPath);
+
+  // 对 ..、../、.、./ 类型导入做处理
+  if (['../', '..', '.', './'].includes(depPath)) {
+    const indexFilename = getRealIndexFilepath(depPath, absolutePath, extensions);
+
+    if (indexFilename) {
+      return {
+        path: indexFilename.path,
+        vmPath: getVMPath(indexFilename.path, tmp),
+        source: fs.readFileSync(indexFilename.absolutePath, 'utf-8'),
+      };
+    }
+
+    throw new Error(`${absolutePath} file not found`);
+  }
+
+  // 对 ../XX ./XX 类型文件做处理
+  const [lastName] = depPath.split(path.sep).slice(-1);
+  if (lastName === 'index') {
+    const indexFilename = getRealIndexFilepath(depPath, path.dirname(absolutePath), extensions);
+
+    if (indexFilename) {
+      return {
+        path: indexFilename.path,
+        vmPath: getVMPath(indexFilename.path, tmp),
+        source: fs.readFileSync(indexFilename.absolutePath, 'utf-8'),
+      };
+    }
+
+    throw new Error(`${absolutePath} file not found`);
+  }
+
+  if (fs.existsSync(absolutePath) && fs.statSync(absolutePath).isFile()) {
+    return {
+      path: depPath,
+      vmPath: getVMPath(depPath, tmp),
+      source: fs.readFileSync(absolutePath, 'utf-8'),
+    };
+  }
+
+  const filepath = getRealFilepath(depPath, absolutePath, extensions);
+
+  if (filepath) {
+    return {
+      path: filepath.path,
+      vmPath: getVMPath(filepath.path, tmp),
+      source: fs.readFileSync(filepath.absolutePath, 'utf-8'),
+    };
+  }
+
+  throw new Error(`${absolutePath} file not found`);
+};
+
+const packageVersionsCache = new Map<string, { name: string; version: string }>();
+
+/**
+ * 获取本地安装的版本信息
+ * @param pkgName package 名称
+ */
+export const getDependenciesVersion = (pkgName: string) => {
+  const hasCache = packageVersionsCache.has(pkgName);
+
+  if (hasCache) {
+    return packageVersionsCache.get(pkgName) as { name: string; version: string };
+  }
+
+  try {
+    const resolvePath = require.resolve(pkgName);
+    const paths = R.split(resolvePath, path.sep);
+    const nmIndex = R.findLastIndex(name => 'node_modules' === name, paths);
+    const nmPath = R.pipe(R.slice(0, nmIndex + 1), R.join(path.sep))(paths);
+    const currentPath = path.join(nmPath, pkgName, 'package.json');
+    const { name, version } = require(currentPath);
+    const dep = { name, version } as { name: string; version: string };
+
+    packageVersionsCache.set(pkgName, dep);
+
+    return dep;
+  } catch (err) {
+    throw new Error(err);
+  }
 };

@@ -1,12 +1,10 @@
 import React from 'react';
-import { Button } from '@shuyun-ep-team/kylin-ui';
+import ss from '.';
+import { test } from '../utils';
+import './styles/base.css';
 
+ss();
+test();
 export default () => {
-  return (
-    <a>
-      <Button></Button>
-    </a>
-  );
+  return <a>test</a>;
 };
-
-export class App extends React.Components {}
