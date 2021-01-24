@@ -1,7 +1,7 @@
 {
   "name": "md2jsonml-core",
   "version": "0.0.10-alpha.0",
-  "description": "装换核心",
+  "description": "Using mark-twain to convert markdown to jsonMl",
   "keywords": [
     "markdown"
   ],
