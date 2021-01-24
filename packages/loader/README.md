@@ -1,5 +1,7 @@
 # `markdown to jsonML loader`
 
+![npm](https://img.shields.io/npm/v/webpack-md2jsonml-loader?color=rgb%280%2C%20126%2C%20198%29&style=flat-square)
+
 > Using mark-twain to convert markdown to jsonMl, work on webpack.
 
 ## Features
