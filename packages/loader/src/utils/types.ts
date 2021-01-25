@@ -22,6 +22,7 @@ export interface IAppendsDemo {
   highlight?: any[];
   attributes: { src: string; [key: string]: string };
   dependencies?: IDependencyFile[];
+  sandboxCode?: string;
 }
 
 export interface IMarkdownDataAppendDemo extends IMarkdownData {
@@ -38,6 +39,7 @@ export interface IDependencyLocal {
   source: string;
   path: string;
   vmPath: string;
+  import: string;
 }
 
 export type IDependencyFile = IDependencyPackage | IDependencyLocal;

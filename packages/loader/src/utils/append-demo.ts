@@ -3,10 +3,11 @@ import R from 'ramda';
 import jsonMLUtils from 'jsonml.js/lib/utils';
 import {
   getDemoRanges,
+  genSandboxCode,
+  getDemoCodeLocal,
+  getDependenciesVersion,
   getDemoCodeAndHighlight,
   getDemoCodeDependencies,
-  getDependenciesVersion,
-  getDemoCodeLocal,
 } from '.';
 import { IMarkdownData } from '../types';
 import {
@@ -68,6 +69,11 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
 
         return { type: 'package', ...pkg } as IDependencyPackage;
       })(dependencies);
+    }
+
+    // 若存在 code, 则生成 沙箱代码
+    if (info.code) {
+      info.sandboxCode = genSandboxCode(info.code, info.dependencies);
     }
 
     delLength = delLength + content.splice(offsetStart, offsetEnd - offsetStart + 1).length;

@@ -7,7 +7,7 @@ import { highlight } from './highlight';
 import { parse } from '@babel/core';
 import { File } from '@babel/types';
 import { resolveExtensions } from '../constant/resolve-demo';
-import { IBabelConfig } from './types';
+import { IBabelConfig, IDependencyFile, IDependencyLocal } from './types';
 
 const { getTagName, getChildren, isElement } = jsonMLUtils;
 
@@ -162,6 +162,7 @@ const getRealIndexFilepath = (
 
     if (indexFiles.includes(current)) {
       return {
+        import: filepath,
         path: path.join(filepath, current),
         absolutePath: path.join(absFilepath, current),
       };
@@ -188,6 +189,7 @@ const getRealFilepath = (
 
     if (isExist(current) && isDirectory(current) === false) {
       return {
+        import: filepath,
         path: filepath + ext,
         absolutePath: current,
       };
@@ -197,7 +199,8 @@ const getRealFilepath = (
   return undefined;
 };
 
-const getVMPath = (filepath: string, vm = '_temp') => filepath.replace(/\.\./g, vm);
+const getVMPath = (filepath: string, vm = '_temp') =>
+  filepath.replace(/\.\./g, vm).replace(/\.\//, '');
 
 /** 获取 demo 中本地文件依赖 */
 export const getDemoCodeLocal = (
@@ -215,6 +218,7 @@ export const getDemoCodeLocal = (
     if (indexFilename) {
       return {
         path: indexFilename.path,
+        import: indexFilename.import,
         vmPath: getVMPath(indexFilename.path, tmp),
         source: fs.readFileSync(indexFilename.absolutePath, 'utf-8'),
       };
@@ -230,6 +234,7 @@ export const getDemoCodeLocal = (
 
     if (indexFilename) {
       return {
+        import: indexFilename.import,
         path: indexFilename.path,
         vmPath: getVMPath(indexFilename.path, tmp),
         source: fs.readFileSync(indexFilename.absolutePath, 'utf-8'),
@@ -241,6 +246,7 @@ export const getDemoCodeLocal = (
 
   if (fs.existsSync(absolutePath) && fs.statSync(absolutePath).isFile()) {
     return {
+      import: depPath,
       path: depPath,
       vmPath: getVMPath(depPath, tmp),
       source: fs.readFileSync(absolutePath, 'utf-8'),
@@ -251,6 +257,7 @@ export const getDemoCodeLocal = (
 
   if (filepath) {
     return {
+      import: filepath.import,
       path: filepath.path,
       vmPath: getVMPath(filepath.path, tmp),
       source: fs.readFileSync(filepath.absolutePath, 'utf-8'),
@@ -258,6 +265,31 @@ export const getDemoCodeLocal = (
   }
 
   throw new Error(`${absolutePath} file not found`);
+};
+
+/**
+ * 生成沙箱 code
+ * @param code code
+ * @param dependencies 依赖
+ */
+export const genSandboxCode = (code: string, dependencies: IDependencyFile[] = []) => {
+  if (dependencies.length === 0) {
+    return code;
+  }
+  // 获取父类文件
+  const parentPathReg = /^(\.{2}\/)|(^\.{2}$)/;
+  const tmpFiles = R.filter<IDependencyFile>(
+    item => item.type === 'local' && parentPathReg.test(item.import)
+  )(dependencies) as IDependencyLocal[];
+
+  let sandboxCode = code;
+
+  // 变量替换包含父类目录的导入，将其转换为临时目录
+  for (const item of tmpFiles) {
+    sandboxCode = R.replace(item.import, `./${item.vmPath}`, sandboxCode);
+  }
+
+  return sandboxCode;
 };
 
 const packageVersionsCache = new Map<string, { name: string; version: string }>();
