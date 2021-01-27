@@ -92,34 +92,36 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
   markdownData.content = content;
   (markdownData as IMarkdownDataAppendDemo).demos = demos;
 
-  (markdownData as IMarkdownDataAppendDemo).demosToc = genTocJsonML(
-    clsPrefix,
-    demos.map(item => {
-      const node = item.title;
-      const tagName = getTagName(node);
-      const headingNodeChildren = getChildren(node);
+  if (Array.isArray(demos) && demos.length) {
+    (markdownData as IMarkdownDataAppendDemo).demosToc = genTocJsonML(
+      clsPrefix,
+      demos.map(item => {
+        const node = item.title;
+        const tagName = getTagName(node);
+        const headingNodeChildren = getChildren(node);
 
-      const headingText = headingNodeChildren
-        .map((node: any) => {
-          if (isElement(node)) {
-            if (hasAttributes(node)) {
-              return node[2] || '';
+        const headingText = headingNodeChildren
+          .map((node: any) => {
+            if (isElement(node)) {
+              if (hasAttributes(node)) {
+                return node[2] || '';
+              }
+              return node[1] || '';
             }
-            return node[1] || '';
-          }
-          return node;
-        })
-        .join('');
-      const headingTextId = headingText.trim().replace(/\s+/g, '-');
+            return node;
+          })
+          .join('');
+        const headingTextId = headingText.trim().replace(/\s+/g, '-');
 
-      return {
-        tag: tagName,
-        text: headingText,
-        id: headingTextId,
-        node: headingNodeChildren,
-      };
-    })
-  );
+        return {
+          tag: tagName,
+          text: headingText,
+          id: headingTextId,
+          node: headingNodeChildren,
+        };
+      })
+    );
+  }
 
   return markdownData;
 }
