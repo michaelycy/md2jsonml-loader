@@ -1,5 +1,5 @@
 import jsonMLUtils from 'jsonml.js/lib/utils';
-import { isHeading } from '.';
+import { isHeading, genTocJsonML } from '.';
 
 export interface ITocOptions {
   maxDepth?: 1 | 2 | 3 | 4 | 5 | 6;
@@ -11,7 +11,7 @@ const { getTagName, getChildren, isElement } = jsonMLUtils;
 const hasAttributes = (jml: any) => Array.isArray(jml) && 'string' === typeof jml[0];
 
 function transform(markdownData: any, config: ITocOptions = {}) {
-  const { maxDepth = 2, keepElem, clsPrefix } = config;
+  const { maxDepth = 2, keepElem, clsPrefix = 'md' } = config;
 
   const listItems =
     hasAttributes(markdownData.content) &&
@@ -37,23 +37,31 @@ function transform(markdownData: any, config: ITocOptions = {}) {
 
         const headingTextId = headingText.trim().replace(/\s+/g, '-');
 
-        return [
-          'li',
-          {
-            className: `${clsPrefix}-toc-li toc-li`,
-          },
-          [
-            'a',
-            {
-              className: `${clsPrefix}-toc-${tagName}`,
-              href: `#${headingTextId}`,
-              title: headingText,
-            },
-          ].concat(keepElem ? headingNodeChildren : [headingText]),
-        ];
+        // return [
+        //   'li',
+        //   {
+        //     className: `${clsPrefix}-toc-li toc-li`,
+        //   },
+        //   [
+        //     'a',
+        //     {
+        //       className: `${clsPrefix}-toc-${tagName}`,
+        //       href: `#${headingTextId}`,
+        //       title: headingText,
+        //     },
+        //   ].concat(keepElem ? headingNodeChildren : [headingText]),
+        // ];
+
+        return {
+          id: headingTextId,
+          text: headingText,
+          node: headingNodeChildren,
+          tag: tagName,
+        };
       });
 
-  markdownData.toc = ['ul', { className: `${clsPrefix}-toc-ul toc-ul` }].concat(listItems);
+  // markdownData.toc = ['ul', { className: `${clsPrefix}-toc-ul toc-ul` }].concat(listItems);
+  markdownData.toc = genTocJsonML(clsPrefix, listItems, keepElem);
 
   return markdownData;
 }

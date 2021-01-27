@@ -7,7 +7,7 @@ import { highlight } from './highlight';
 import { parse } from '@babel/core';
 import { File } from '@babel/types';
 import { resolveExtensions } from '../constant/resolve-demo';
-import { IBabelConfig, IDependencyFile, IDependencyLocal } from './types';
+import { IBabelConfig, IDependencyFile, IDependencyLocal, IToc } from './types';
 
 const { getTagName, getChildren, isElement } = jsonMLUtils;
 
@@ -320,4 +320,16 @@ export const getDependenciesVersion = (pkgName: string) => {
   } catch (err) {
     throw new Error(err);
   }
+};
+
+export const genTocJsonML = (clsPrefix?: string, list: IToc[] = [], keepElem = false) => {
+  const itemList = list.map(({ text, id, tag, node }) => [
+    'li',
+    { className: `${clsPrefix}-toc-li toc-li` },
+    ['a', { className: `${clsPrefix}-toc-${tag}`, href: `#${id}`, title: text }].concat(
+      keepElem ? node : [text]
+    ),
+  ]);
+
+  return ['ul', { className: `${clsPrefix}-toc-ul toc-ul` }, ...itemList];
 };

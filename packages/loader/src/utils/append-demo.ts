@@ -8,6 +8,7 @@ import {
   getDependenciesVersion,
   getDemoCodeAndHighlight,
   getDemoCodeDependencies,
+  genTocJsonML,
 } from '.';
 import { IMarkdownData } from '../types';
 import {
@@ -19,7 +20,14 @@ import {
   IMarkdownDataAppendDemo,
 } from '../utils/types';
 
-const { getAttributes, setAttribute } = jsonMLUtils;
+const {
+  getAttributes,
+  setAttribute,
+  getTagName,
+  getChildren,
+  isElement,
+  hasAttributes,
+} = jsonMLUtils;
 
 function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}) {
   const { fileAbsolutePath, content = [] } = markdownData;
@@ -83,6 +91,35 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
 
   markdownData.content = content;
   (markdownData as IMarkdownDataAppendDemo).demos = demos;
+
+  (markdownData as IMarkdownDataAppendDemo).demosToc = genTocJsonML(
+    clsPrefix,
+    demos.map(item => {
+      const node = item.title;
+      const tagName = getTagName(node);
+      const headingNodeChildren = getChildren(node);
+
+      const headingText = headingNodeChildren
+        .map((node: any) => {
+          if (isElement(node)) {
+            if (hasAttributes(node)) {
+              return node[2] || '';
+            }
+            return node[1] || '';
+          }
+          return node;
+        })
+        .join('');
+      const headingTextId = headingText.trim().replace(/\s+/g, '-');
+
+      return {
+        tag: tagName,
+        text: headingText,
+        id: headingTextId,
+        node: headingNodeChildren,
+      };
+    })
+  );
 
   return markdownData;
 }

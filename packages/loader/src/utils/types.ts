@@ -27,6 +27,7 @@ export interface IAppendsDemo {
 
 export interface IMarkdownDataAppendDemo extends IMarkdownData {
   demos: IAppendsDemo[];
+  demosToc: any;
 }
 
 export interface IDependencyPackage {
@@ -43,3 +44,10 @@ export interface IDependencyLocal {
 }
 
 export type IDependencyFile = IDependencyPackage | IDependencyLocal;
+
+export interface IToc {
+  id: string;
+  tag: string;
+  text: string;
+  node: any;
+}
