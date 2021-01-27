@@ -1,6 +1,6 @@
 {
   "name": "webpack-md2jsonml-loader",
-  "version": "0.0.10",
+  "version": "0.0.11-alpha.0",
   "description": "markdown to jsonml",
   "keywords": [
     "markdown",
