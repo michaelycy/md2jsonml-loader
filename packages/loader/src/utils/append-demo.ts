@@ -69,7 +69,7 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
         filename: `file${extname}`,
         ...babelConfig,
       });
-      console.log('dependencies: ', dependencies, ignoreDependencies, presetDependencies);
+
       info.dependencies = R.pipe<string[], (IDependencyFile | null)[], any[]>(
         R.map<string, IDependencyFile | null>(dep => {
           const isLocal = /^\./.test(dep);
