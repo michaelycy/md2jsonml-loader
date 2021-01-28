@@ -15,8 +15,6 @@ import {
   IDataAppendOptions,
   IAppendsDemo,
   IDependencyFile,
-  IDependencyLocal,
-  IDependencyPackage,
   IMarkdownDataAppendDemo,
 } from '../utils/types';
 
@@ -70,30 +68,34 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
         ...babelConfig,
       });
 
-      info.dependencies = R.pipe<string[], (IDependencyFile | null)[], any[]>(
-        R.map<string, IDependencyFile | null>(dep => {
+      info.dependencies = R.pipe<string[], IDependencyFile[], any[]>(
+        R.map<string, IDependencyFile>(dep => {
           const isLocal = /^\./.test(dep);
 
           if (isLocal) {
             const local = getDemoCodeLocal(dep, demoDirPath, undefined, resolveExtensions);
 
-            return { type: 'local', ...local } as IDependencyLocal;
+            return { type: 'local', ...local };
           }
 
           const ignored = ignoreDependencies.findIndex(i => i === dep) >= 0;
 
           // 若为忽略配置则返回null
           if (ignored) {
-            return null;
+            return {
+              type: 'package',
+              name: dep,
+              version: 'latest',
+            };
           }
 
           // 若存在预设依赖则直接返回
           if (presetDependencies && presetDependencies[dep]) {
-            return { name: dep, version: presetDependencies[dep] } as IDependencyPackage;
+            return { type: 'package', name: dep, version: presetDependencies[dep] };
           }
 
           const pkg = getDependenciesVersion(dep);
-          return { type: 'package', ...pkg } as IDependencyPackage;
+          return { type: 'package', ...pkg };
         }),
         R.filter(i => !!i)
       )(dependencies);
