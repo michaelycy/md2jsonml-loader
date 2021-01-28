@@ -1,6 +1,6 @@
 {
   "name": "webpack-md2jsonml-loader",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "markdown to jsonml",
   "keywords": [
     "markdown",
@@ -18,7 +18,7 @@
     "@babel/core": "^7.12.10",
     "babel-preset-react-app": "^10.0.0",
     "loader-utils": "^2.0.0",
-    "md2jsonml-core": "^0.0.10",
+    "md2jsonml-core": "^0.0.12",
     "prismjs": "^1.23.0",
     "ramda": "^0.27.1",
     "schema-utils": "^3.0.0"
