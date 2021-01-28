@@ -6,6 +6,8 @@ export interface ILoaderOptions {
   tocKeepElem?: boolean;
   demoBabelConfig?: Omit<IBabelConfig, 'filename'>;
   demoResolveExtensions?: string[];
+  demoIgnoreDependencies?: string[];
+  demoPresetDependencies?: Record<string, string>;
 }
 export interface IMarkdownData {
   content: any[];

@@ -31,7 +31,13 @@ const {
 
 function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}) {
   const { fileAbsolutePath, content = [] } = markdownData;
-  const { clsPrefix = 'md', babelConfig, resolveExtensions } = options;
+  const {
+    clsPrefix = 'md',
+    babelConfig,
+    resolveExtensions,
+    ignoreDependencies = [],
+    presetDependencies,
+  } = options;
   // 1、定位到 h4 + hr 的位置
   // 2、将 demo 相关内容从 content 中移除
   // 3、解析移除的内容并添加值 demos 中
@@ -63,20 +69,34 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
         filename: `file${extname}`,
         ...babelConfig,
       });
+      console.log('dependencies: ', dependencies, ignoreDependencies, presetDependencies);
+      info.dependencies = R.pipe<string[], (IDependencyFile | null)[], any[]>(
+        R.map<string, IDependencyFile | null>(dep => {
+          const isLocal = /^\./.test(dep);
 
-      info.dependencies = R.map<string, IDependencyFile>(dep => {
-        const isLocal = /^\./.test(dep);
+          if (isLocal) {
+            const local = getDemoCodeLocal(dep, demoDirPath, undefined, resolveExtensions);
 
-        if (isLocal) {
-          const local = getDemoCodeLocal(dep, demoDirPath, undefined, resolveExtensions);
+            return { type: 'local', ...local } as IDependencyLocal;
+          }
 
-          return { type: 'local', ...local } as IDependencyLocal;
-        }
+          const ignored = ignoreDependencies.findIndex(i => i === dep) >= 0;
 
-        const pkg = getDependenciesVersion(dep);
+          // 若为忽略配置则返回null
+          if (ignored) {
+            return null;
+          }
 
-        return { type: 'package', ...pkg } as IDependencyPackage;
-      })(dependencies);
+          // 若存在预设依赖则直接返回
+          if (presetDependencies && presetDependencies[dep]) {
+            return { name: dep, version: presetDependencies[dep] } as IDependencyPackage;
+          }
+
+          const pkg = getDependenciesVersion(dep);
+          return { type: 'package', ...pkg } as IDependencyPackage;
+        }),
+        R.filter(i => !!i)
+      )(dependencies);
     }
 
     // 若存在 code, 则生成 沙箱代码

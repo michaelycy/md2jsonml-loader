@@ -1,4 +1,5 @@
 import { Schema } from 'schema-utils/declarations/validate';
+import { resolveExtensions } from './constant/resolve-demo';
 
 export const loaderOptions = {
   type: 'object',
@@ -13,7 +14,18 @@ export const loaderOptions = {
       items: {
         type: 'string',
       },
-      default:['']
+      default: resolveExtensions,
+    },
+    demoIgnoreDependencies: {
+      type: 'array',
+      uniqueItems: true,
+      items: {
+        type: 'string',
+      },
+      default: [],
+    },
+    demoPresetDependencies: {
+      type: 'object',
     },
   },
   additionalProperties: false,

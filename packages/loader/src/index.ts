@@ -19,7 +19,15 @@ export default function loader(this: any, source: string) {
   const options: ILoaderOptions = getOptions(this || { clsPrefix: 'md' });
   // 校验参数
   validate(loaderOptions, options, { name: 'webpack-md2jsonml-loader' });
-  const { clsPrefix, tocKeepElem, tocMaxDepth, demoBabelConfig, demoResolveExtensions } = options;
+  const {
+    clsPrefix,
+    tocKeepElem,
+    tocMaxDepth,
+    demoBabelConfig,
+    demoResolveExtensions,
+    demoPresetDependencies,
+    demoIgnoreDependencies = [],
+  } = options;
 
   // 获取文件路径j
   const { resourcePath, rootContext } = this as any;
@@ -39,6 +47,8 @@ export default function loader(this: any, source: string) {
       clsPrefix,
       babelConfig: demoBabelConfig,
       resolveExtensions: demoResolveExtensions,
+      ignoreDependencies: demoIgnoreDependencies,
+      presetDependencies: demoPresetDependencies,
     }),
     highlightUtils(),
     tocUtils({ maxDepth: tocMaxDepth, keepElem: tocKeepElem, clsPrefix }),
