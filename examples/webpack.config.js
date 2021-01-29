@@ -29,8 +29,8 @@ module.exports = {
         loader: loader,
         options: {
           // clsPrefix: 'hs',
-          demoIgnoreDependencies: ['@shuyun-ep-team/kylin-ui'],
-          demoPresetDependencies: { react: '^16.8.0' },
+          demoIgnoreDependencies: [{ name: '@shuyun-ep-team/kylin-ui', version: '0.3.1' }],
+          demoPresetDependencies: { react: '^16.8.0', 'react-dom': '^16.8.0' },
         },
       },
     ],

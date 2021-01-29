@@ -16,6 +16,7 @@ import {
   IAppendsDemo,
   IDependencyFile,
   IMarkdownDataAppendDemo,
+  IDependencyPackage,
 } from '../utils/types';
 
 const {
@@ -34,8 +35,33 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
     babelConfig,
     resolveExtensions,
     ignoreDependencies = [],
-    presetDependencies,
+    presetDependencies = {},
   } = options;
+
+  // 预设依赖
+  const presetDependencyNameRules = Object.keys(presetDependencies).map(name => ({
+    selector: new RegExp(`^${name}((/.+)|$)`),
+    name,
+    version: presetDependencies[name],
+  }));
+
+  // 忽略依赖
+  const ignoreDependencyNameRules = ignoreDependencies.map(item => {
+    if (typeof item === 'string') {
+      return {
+        selector: new RegExp(`^${item}((/.+)|$)`),
+        name: item,
+        version: 'latest',
+      };
+    } else {
+      return {
+        selector: new RegExp(`^${item.name}((/.+)|$)`),
+        name: item.name,
+        version: item.version,
+      };
+    }
+  });
+
   // 1、定位到 h4 + hr 的位置
   // 2、将 demo 相关内容从 content 中移除
   // 3、解析移除的内容并添加值 demos 中
@@ -68,8 +94,14 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
         ...babelConfig,
       });
 
-      info.dependencies = R.pipe<string[], IDependencyFile[], any[]>(
-        R.map<string, IDependencyFile>(dep => {
+      info.dependencies = R.pipe<
+        string[],
+        (IDependencyFile | null)[],
+        any[],
+        IDependencyFile[],
+        IDependencyFile[]
+      >(
+        R.map<string, IDependencyFile | null>(dep => {
           const isLocal = /^\./.test(dep);
 
           if (isLocal) {
@@ -78,26 +110,40 @@ function transform(markdownData: IMarkdownData, options: IDataAppendOptions = {}
             return { type: 'local', ...local };
           }
 
-          const ignored = ignoreDependencies.findIndex(i => i === dep) >= 0;
+          const [ignoredDep] = ignoreDependencyNameRules.filter(({ selector }) =>
+            selector.test(dep)
+          );
 
-          // 若为忽略配置则返回null
-          if (ignored) {
+          // 若为忽略配置,则返回 latest 版本
+          if (ignoredDep) {
             return {
               type: 'package',
-              name: dep,
-              version: 'latest',
+              name: ignoredDep.name,
+              version: ignoredDep.version,
             };
           }
 
-          // 若存在预设依赖则直接返回
-          if (presetDependencies && presetDependencies[dep]) {
-            return { type: 'package', name: dep, version: presetDependencies[dep] };
-          }
+          if (presetDependencies) {
+            // 通过选择器获取预设依赖配置
+            const [presetDep] = presetDependencyNameRules.filter(({ selector }) =>
+              selector.test(dep)
+            );
 
+            // 若存在依赖配置则返回
+            if (presetDep) {
+              return null;
+            }
+          }
           const pkg = getDependenciesVersion(dep);
+
           return { type: 'package', ...pkg };
         }),
-        R.filter(i => !!i)
+        // 移除 null
+        R.filter(i => !!i),
+        R.concat<IDependencyPackage>(
+          presetDependencyNameRules.map(({ name, version }) => ({ type: 'package', name, version }))
+        ),
+        R.uniq
       )(dependencies);
     }
 

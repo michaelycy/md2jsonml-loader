@@ -1,1 +1,1 @@
-export const c = () => 0;
+export const dotTest = () => 0;

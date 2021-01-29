@@ -13,7 +13,7 @@ export interface IDataAppendOptions {
   clsPrefix?: string;
   babelConfig?: IBabelConfig;
   resolveExtensions?: string[];
-  ignoreDependencies?: string[];
+  ignoreDependencies?: (string | { name: string; version: string })[];
   presetDependencies?: Record<string, string>;
 }
 

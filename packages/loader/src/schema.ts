@@ -19,13 +19,26 @@ export const loaderOptions = {
     demoIgnoreDependencies: {
       type: 'array',
       uniqueItems: true,
+      description: 'Demo 代码中需要忽略的依赖配置',
       items: {
-        type: 'string',
+        oneOf: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'object',
+            properties: {
+              name: { type: 'string' },
+              version: { type: 'string' },
+            },
+          },
+        ],
       },
       default: [],
     },
     demoPresetDependencies: {
       type: 'object',
+      description: 'Demo 代码中需要预设的依赖配置',
     },
   },
   additionalProperties: false,

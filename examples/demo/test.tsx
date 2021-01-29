@@ -1,12 +1,18 @@
 import React from 'react';
-import ss from '.';
-import { test } from '../utils';
+import { twinDotTest } from '../utils';
 import './styles/base.css';
-import { Button } from '@shuyun-ep-team/kylin-ui';
-
-ss();
-test();
+// 忽略依赖
+import Button from '@shuyun-ep-team/kylin-ui/es/button';
+import { Affix } from '@shuyun-ep-team/kylin-ui';
+import { dotTest } from '.';
 
 export default () => {
-  return <a>test</a>;
+  dotTest();
+  twinDotTest();
+  return (
+    <a>
+      <Affix>affix</Affix>
+      <Button>确认</Button>
+    </a>
+  );
 };
