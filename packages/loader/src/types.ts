@@ -9,6 +9,7 @@ export interface ILoaderOptions {
   demoIgnoreDependencies?: (string | { name: string; version: string })[];
   demoPresetDependencies?: Record<string, string>;
 }
+
 export interface IMarkdownData {
   content: any[];
   filepath: string;
