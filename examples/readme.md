@@ -14,6 +14,23 @@ subtitle: Affix
 
 页面可视范围过小时，慎用此功能以免遮挡页面内容。
 
+```ts
+import readme from './readme.md';
+// import React from 'react';
+
+if (process.env.NODE_ENV === 'production') {
+  console.log('readme log: ', readme);
+  const b = 12;
+  console.log('b: ', b);
+} else {
+  console.log('readme log2: ', readme);
+  const a = 12;
+  console.log('a: ', a);
+}
+
+
+```
+
 #### 按钮类型`React`
 
 ---

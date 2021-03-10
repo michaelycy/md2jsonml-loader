@@ -1,7 +1,6 @@
 import Prism from './prism';
 import jsonMLUtils from 'jsonml.js/lib/utils';
 import { IMTResult } from 'md2jsonml-core';
-import Prismjs from './prism';
 
 const { getChildren, getAttributes, isElement } = jsonMLUtils;
 
@@ -23,15 +22,12 @@ export function highlight(node: any) {
 
   let language = Prism.languages[getAttributes(node).lang];
 
-  if (language) {
-    language = Prismjs.languages.autoit || {};
+  if (!language) {
+    language = Prism.languages.autoit || {};
   }
 
-  getAttributes(node).highlighted = Prism.highlight(
-    getCode(node),
-    language || {},
-    getAttributes(node).lang
-  );
+  const highlightCode = Prism.highlight(getCode(node), language || {}, getAttributes(node).lang);
+  getAttributes(node).highlighted = highlightCode;
 }
 
 export default () => (markdownData: IMTResult) => {

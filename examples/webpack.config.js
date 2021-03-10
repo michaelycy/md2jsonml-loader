@@ -1,6 +1,5 @@
 const path = require('path');
 const loader = path.resolve(__dirname, '../packages', 'loader', 'lib', 'index.js');
-// const { CodeParsePlugin } = require('../packages/loader/lib/plugins/index');
 
 module.exports = {
   mode: 'development',
@@ -25,7 +24,6 @@ module.exports = {
       // },
       {
         test: /\.md?$/,
-        // loader: 'webpack-md2jsonml-loader',
         loader: loader,
         options: {
           // clsPrefix: 'hs',
